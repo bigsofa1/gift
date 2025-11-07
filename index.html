@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <p>hi alex</p>
+    <p>this is your special xmas website</p>
+    <p>if you can press this button <span class="color-green">85</span> times in <span class="color-green">5</span> seconds you get to have your gift</p>
+    <button id="gift-btn" type="button">gift generator</button>
+    <p id="status">0</p>
+    <p id="countdown">ready</p>
+    <p id="jk-message" hidden>just kidding merry xmas</p>
+    <section id="gift" hidden>
+        <img src="gift.jpg" alt="Gift">
+    </section>
+
+    <script>
+        const button = document.getElementById('gift-btn');
+        const status = document.getElementById('status');
+        const countdownDisplay = document.getElementById('countdown');
+        const jkMessage = document.getElementById('jk-message');
+        const gift = document.getElementById('gift');
+
+        const COUNTDOWN_DURATION_MS = 5000;
+        const COUNTDOWN_TICK_MS = 100;
+
+        let clickCount = 0;
+        let countdownRemaining = COUNTDOWN_DURATION_MS;
+        let intervalId = null;
+
+        function resetCountdownDisplay() {
+            countdownDisplay.textContent = 'ready';
+        }
+
+        function updateCountdownDisplay() {
+            const seconds = Math.ceil(countdownRemaining / 100) / 10; // one decimal place
+            countdownDisplay.textContent = `${Math.max(seconds, 0).toFixed(1)}s`;
+        }
+
+        function finishCountdown() {
+            clearInterval(intervalId);
+            intervalId = null;
+            countdownRemaining = 0;
+            updateCountdownDisplay();
+            jkMessage.hidden = false;
+            gift.hidden = false;
+            button.disabled = true;
+        }
+
+        button.addEventListener('click', () => {
+            const isRunning = Boolean(intervalId);
+
+            if (!isRunning) {
+                button.disabled = false;
+                clickCount = 0;
+                gift.hidden = true;
+                jkMessage.hidden = true;
+                countdownRemaining = COUNTDOWN_DURATION_MS;
+                updateCountdownDisplay();
+                countdownDisplay.classList.add('color-red');
+            }
+
+            clickCount += 1;
+            status.textContent = clickCount.toString();
+
+            if (isRunning) {
+                return;
+            }
+
+            intervalId = setInterval(() => {
+                countdownRemaining -= COUNTDOWN_TICK_MS;
+                if (countdownRemaining <= 0) {
+                    finishCountdown();
+                } else {
+                    updateCountdownDisplay();
+                }
+            }, COUNTDOWN_TICK_MS);
+        });
+    </script>
+</body>
+</html>
